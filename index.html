@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Private AI Hub</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(180deg, #303030, #1a1a1a);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        #login-container,
+        #content-container,
+        #view-container {
+            text-align: center;
+            z-index: 1;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .option-buttons {
+            margin-top: 20px;
+        }
+
+        .section {
+            display: none;
+            margin-top: 20px;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .info-container {
+            max-width: 600px;
+            margin: auto;
+            text-align: left;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            color: #333;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .image-container {
+            margin-top: 10px;
+            max-width: 100%;
+        }
+
+        .button {
+            background-color: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.3s;
+        }
+
+        .button:hover {
+            background-color: #2980b9;
+        }
+
+        .option-buttons button,
+        .button {
+            margin-right: 10px;
+        }
+
+        h3 {
+            color: #fff;
+        }
+
+        h2 {
+            color: #fff;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Login Container -->
+<div id="login-container">
+    <h2>Login</h2>
+    <label for="password">Enter Code:</label>
+    <input type="password" id="password" placeholder="Enter code">
+    <button class="button" onclick="authenticate()">Submit</button>
+</div>
+
+<!-- Content Container -->
+<div id="content-container" class="hidden">
+    <h2>Your Private AI Hub</h2>
+
+    <!-- Option Buttons -->
+    <div class="option-buttons">
+        <button class="button" onclick="showOption('todo')">What To Do Today</button>
+        <button class="button" onclick="showOption('notes')">Notes</button>
+        <button class="button" onclick="showOption('money')">Money</button>
+        <button class="button" onclick="showOption('accounts')">Account Numbers</button>
+        <button class="button" onclick="showOption('passwords')">Passwords</button>
+    </div>
+
+    <!-- Sections for each option -->
+    <div class="section" id="section-todo">
+        <h3>What To Do Today</h3>
+        <textarea id="todo-input" placeholder="Enter your tasks"></textarea>
+        <input type="file" accept="image/*" id="todo-image-input">
+        <button class="button" onclick="enterSection('todo')">Save Information</button>
+        <button class="button" onclick="displayInformation('todo')">Display Information</button>
+        <div id="todo-display" class="info-container"></div>
+    </div>
+
+    <div class="section" id="section-notes">
+        <h3>Notes</h3>
+        <textarea id="notes-input" placeholder="Write your notes"></textarea>
+        <input type="file" accept="image/*" id="notes-image-input">
+        <button class="button" onclick="enterSection('notes')">Save Information</button>
+        <button class="button" onclick="displayInformation('notes')">Display Information</button>
+        <div id="notes-display" class="info-container"></div>
+    </div>
+
+    <div class="section" id="section-money">
+        <h3>Money</h3>
+        <textarea id="money-input" placeholder="Enter financial information"></textarea>
+        <input type="file" accept="image/*" id="money-image-input">
+        <button class="button" onclick="enterSection('money')">Save Information</button>
+        <button class="button" onclick="displayInformation('money')">Display Information</button>
+        <div id="money-display" class="info-container"></div>
+    </div>
+
+    <div class="section" id="section-accounts">
+        <h3>Account Numbers</h3>
+        <textarea id="accounts-input" placeholder="Enter account information"></textarea>
+        <input type="file" accept="image/*" id="accounts-image-input">
+        <button class="button" onclick="enterSection('accounts')">Save Information</button>
+        <button class="button" onclick="displayInformation('accounts')">Display Information</button>
+        <div id="accounts-display" class="info-container"></div>
+    </div>
+
+    <div class="section" id="section-passwords">
+        <h3>Passwords</h3>
+        <textarea id="passwords-input" placeholder="Enter passwords"></textarea>
+        <input type="file" accept="image/*" id="passwords-image-input">
+        <button class="button" onclick="enterSection('passwords')">Save Information</button>
+        <button class="button" onclick="displayInformation('passwords')">Display Information</button>
+        <div id="passwords-display" class="info-container"></div>
+    </div>
+
+    <!-- View Information Button -->
+    <button class="button" onclick="displayAllInformation()">View All Information</button>
+</div>
+
+<!-- View Container -->
+<div id="view-container" class="hidden"></div>
+
+<script>
+    // Object to store section information and images
+    const sectionInfo = {};
+    const sectionImages = {};
+
+    // Simulated authentication function
+    function authenticate() {
+        const enteredCode = document.getElementById('password').value;
+        const correctCode = '369';
+
+        if (enteredCode === correctCode) {
+            // Show the content container if the code is correct
+            document.getElementById('login-container').style.display = 'none';
+            document.getElementById('content-container').style.display = 'block';
+        } else {
+            alert('Incorrect code. Please try again.');
+        }
+    }
+
+    // Function to show a specific option section
+    function showOption(optionId) {
+        // Hide all sections
+        const sections = document.getElementsByClassName('section');
+        for (let i = 0; i < sections.length; i++) {
+            sections[i].style.display = 'none';
+        }
+
+        // Show the selected option section
+        document.getElementById(`section-${optionId}`).style.display = 'block';
+    }
+
+    // Function to enter the section and save information
+    function enterSection(sectionId) {
+        const infoInput = document.getElementById(`${sectionId}-input`);
+        sectionInfo[sectionId] = infoInput.value;
+
+        const imageInput = document.getElementById(`${sectionId}-image-input`);
+        if (imageInput.files.length > 0) {
+            const file = imageInput.files[0];
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                sectionImages[sectionId] = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        infoInput.value = ''; // Clear the input field
+        imageInput.value = ''; // Clear the file input
+    }
+
+    // Function to display information in the view container
+    function displayInformation(sectionId) {
+        const viewContent = document.getElementById(`${sectionId}-display`);
+        viewContent.innerHTML = '<h3>Your Information</h3>';
+        viewContent.innerHTML += `<h4>${sectionId}</h4>`;
+        viewContent.innerHTML += `<p>${sectionInfo[sectionId]}</p>`;
+        if (sectionImages[sectionId]) {
+            viewContent.innerHTML += `<img src="${sectionImages[sectionId]}" class="image-container">`;
+        }
+
+        // Show the content container
+        document.getElementById('content-container').style.display = 'block';
+    }
+
+    // Function to display all information in the view container
+    function displayAllInformation() {
+        const viewContent = document.getElementById('view-container');
+        viewContent.innerHTML = '<h2>Your Information</h2>';
+
+        for (const id in sectionInfo) {
+            if (sectionInfo.hasOwnProperty(id)) {
+                viewContent.innerHTML += `<h3>${id}</h3>`;
+                viewContent.innerHTML += `<p>${sectionInfo[id]}</p>`;
+                if (sectionImages[id]) {
+                    viewContent.innerHTML += `<img src="${sectionImages[id]}" class="image-container">`;
+                }
+            }
+        }
+
+        // Show the view container
+        document.getElementById('view-container').style.display = 'block';
+    }
+</script>
+
+</body>
+</html>
